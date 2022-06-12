@@ -237,7 +237,11 @@ ENDIF()
 
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
+
 ADD_EXECUTABLE(example_sdl2 example/example_sdl2.c $<TARGET_OBJECTS:nanovg> $<TARGET_OBJECTS:nanosvg>)
 TARGET_LINK_LIBRARIES(example_sdl2 PRIVATE ${NANOVG_LIB_NAMES} GLEW EGL GL glfw m ${SDL2_LIBRARIES})
+
+ADD_EXECUTABLE(example_sdl_gles2 example/example_sdl_gles2.c $<TARGET_OBJECTS:nanovg> $<TARGET_OBJECTS:nanosvg>)
+TARGET_LINK_LIBRARIES(example_sdl_gles2 PRIVATE ${NANOVG_LIB_NAMES} GLEW EGL GL glfw m ${SDL2_LIBRARIES})
 
 ENDIF()

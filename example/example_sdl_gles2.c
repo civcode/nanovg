@@ -22,9 +22,12 @@
 #include <SDL2/SDL.h>
 
 #define NANOVG_GLES2
-#include <nanovg/nanovg.h>
-#include <nanovg/nanovg_gl.h>
-#include <nanovg/nanovg_gl_utils.h>
+//#include <nanovg/nanovg.h>
+//#include <nanovg/nanovg_gl.h>
+//#include <nanovg/nanovg_gl_utils.h>
+#include <nanovg.h>
+#include <nanovg_gl.h>
+#include <nanovg_gl_utils.h>
 
 int main(int argc, char **argv) {
     int flags = SDL_INIT_EVERYTHING & ~(SDL_INIT_TIMER | SDL_INIT_HAPTIC);
@@ -35,8 +38,8 @@ int main(int argc, char **argv) {
 
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -45,15 +48,25 @@ int main(int argc, char **argv) {
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
 
-    SDL_Window *window = SDL_CreateWindow("NanoVG Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 800,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window *window = SDL_CreateWindow(
+		"NanoVG Example", 
+		SDL_WINDOWPOS_UNDEFINED, 
+		SDL_WINDOWPOS_UNDEFINED, 
+		1024, 
+		800,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
+	);
 
     if (!window) { // If it fails, try with more conservative options
+		SDL_Log("fallback");
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
-
-        window = SDL_CreateWindow("Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 800,
-            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+        window = SDL_CreateWindow(
+			"Example", 
+			SDL_WINDOWPOS_UNDEFINED, 
+			SDL_WINDOWPOS_UNDEFINED, 1024, 800,
+            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
+		);
 
         if (!window) { // We were not able to create the window
             printf("ERROR: SDL_CreateWindow failed: %s", SDL_GetError());
@@ -74,7 +87,7 @@ int main(int argc, char **argv) {
     SDL_GetWindowSize(window, &winWidth, &winHeight);
 
     int fbWidth = winWidth;
-    int fbHeight = winHeight;
+    //int fbHeight = winHeight;
     float fbRatio = (float)fbWidth / (float)winWidth;
 
     int quit=0;
