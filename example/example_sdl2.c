@@ -19,8 +19,8 @@ int main(int argc, char **argv) {
 	SDL_GLContext context;
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,  SDL_GL_CONTEXT_PROFILE_CORE);
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,          1);
@@ -61,11 +61,13 @@ int main(int argc, char **argv) {
 	}
 
 	int winWidth, winHeight;
-	int fbWidth, fbHeight;
+	int fbWidth;
+	//int fbHeight;
 	float pxRatio;
 
 	SDL_GetWindowSize(window, &winWidth, &winHeight);
-	fbWidth=winWidth; fbHeight=winHeight;
+	fbWidth=winWidth; 
+	//fbHeight=winHeight;
 
 	pxRatio = (float)fbWidth / (float)winWidth;
 
@@ -92,6 +94,7 @@ int main(int argc, char **argv) {
 			if (event.type == SDL_KEYDOWN) {
 				switch(event.key.keysym.sym ) {
 					case SDLK_ESCAPE:
+					case SDLK_q:
 						running = 0;
 						break;
 					case SDLK_r:

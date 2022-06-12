@@ -4,7 +4,11 @@ SET(VERSION 0.1)
 
 INCLUDE(GNUInstallDirs)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib
+    )
+
 ADD_COMPILE_OPTIONS(-Wall -Werror)
 ADD_LINK_OPTIONS(LINKER:--as-needed LINKER:--no-undefined LINKER:--no-allow-shlib-undefined)
 
@@ -230,5 +234,10 @@ IF(NANOVG_BUILD_GL2 AND NANOVG_BUILD_GL3 AND NANOVG_BUILD_GLES2 AND NANOVG_BUILD
   ADD_EXECUTABLE(example_gl_wrapper example/example_gl_wrapper.c example/demo.c $<TARGET_OBJECTS:nanovg>)
   TARGET_LINK_LIBRARIES(example_gl_wrapper PRIVATE ${NANOVG_LIB_NAMES} GLEW EGL GL glfw m)
 ENDIF()
+
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+ADD_EXECUTABLE(example_sdl2 example/example_sdl2.c $<TARGET_OBJECTS:nanovg> $<TARGET_OBJECTS:nanosvg>)
+TARGET_LINK_LIBRARIES(example_sdl2 PRIVATE ${NANOVG_LIB_NAMES} GLEW EGL GL glfw m ${SDL2_LIBRARIES})
 
 ENDIF()
