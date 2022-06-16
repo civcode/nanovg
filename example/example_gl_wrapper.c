@@ -16,153 +16,148 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
 #ifdef __APPLE__
-#  define GLFW_INCLUDE_GLCOREARB
+#define GLFW_INCLUDE_GLCOREARB
 #endif
 
 #include <GLFW/glfw3.h>
 
+#include "demo.h"
 #include "nanovg.h"
 #include "nanovg_gl.h"
-#include "demo.h"
 
-typedef enum {
-	NANOVG_GL2,
-	NANOVG_GL3,
-	NANOVG_GLES2,
-	NANOVG_GLES3
-} NanoVG_GL_API;
+typedef enum { NANOVG_GL2,
+               NANOVG_GL3,
+               NANOVG_GLES2,
+               NANOVG_GLES3 } NanoVG_GL_API;
 
 const NanoVG_GL_Functions_VTable *NanoVG_GL_Functions[] = {
-	&NanoVG_GL2_Functions_VTable,
-	&NanoVG_GL3_Functions_VTable,
-	&NanoVG_GLES2_Functions_VTable,
-	&NanoVG_GLES3_Functions_VTable,
+    &NanoVG_GL2_Functions_VTable,
+    &NanoVG_GL3_Functions_VTable,
+    &NanoVG_GLES2_Functions_VTable,
+    &NanoVG_GLES3_Functions_VTable,
 };
 
-void errorcb(int error, const char* desc)
-{
-	printf("GLFW error %d: %s\n", error, desc);
-}
+void errorcb(int error, const char *desc) { printf("GLFW error %d: %s\n", error, desc); }
 
 int blowup = 0;
 int screenshot = 0;
 int premult = 0;
 
-static void key(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void key(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-	NVG_NOTUSED(scancode);
-	NVG_NOTUSED(mods);
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-		blowup = !blowup;
-	if (key == GLFW_KEY_S && action == GLFW_PRESS)
-		screenshot = 1;
-	if (key == GLFW_KEY_P && action == GLFW_PRESS)
-		premult = !premult;
+    NVG_NOTUSED(scancode);
+    NVG_NOTUSED(mods);
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+        blowup = !blowup;
+    if (key == GLFW_KEY_S && action == GLFW_PRESS)
+        screenshot = 1;
+    if (key == GLFW_KEY_P && action == GLFW_PRESS)
+        premult = !premult;
 }
 
 int main()
 {
-	GLFWwindow* window;
-	DemoData data;
-	NVGcontext* vg = NULL;
-	const NanoVG_GL_Functions_VTable *nvgl = NanoVG_GL_Functions[NANOVG_GL2];
-	//double prevt = 0;
+    GLFWwindow *window;
+    DemoData data;
+    NVGcontext *vg = NULL;
+    const NanoVG_GL_Functions_VTable *nvgl = NanoVG_GL_Functions[NANOVG_GL2];
+    // double prevt = 0;
 
-	printf("Using NanoVG API: %s\n", nvgl->name);
+    printf("Using NanoVG API: %s\n", nvgl->name);
 
-	if (!glfwInit()) {
-		printf("Failed to init GLFW.");
-		return -1;
-	}
+    if (!glfwInit()) {
+        printf("Failed to init GLFW.");
+        return -1;
+    }
 
-	glfwSetErrorCallback(errorcb);
+    glfwSetErrorCallback(errorcb);
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 #ifdef DEMO_MSAA
-	glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 #endif
 
-	window = glfwCreateWindow(1000, 600, "NanoVG", NULL, NULL);
-//	window = glfwCreateWindow(1000, 600, "NanoVG", glfwGetPrimaryMonitor(), NULL);
-	if (!window) {
-		glfwTerminate();
-		return -1;
-	}
+    window = glfwCreateWindow(1000, 600, "NanoVG", NULL, NULL);
+    //	window = glfwCreateWindow(1000, 600, "NanoVG", glfwGetPrimaryMonitor(),
+    // NULL);
+    if (!window) {
+        glfwTerminate();
+        return -1;
+    }
 
-	glfwSetKeyCallback(window, key);
+    glfwSetKeyCallback(window, key);
 
-	glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window);
 
 #ifdef DEMO_MSAA
-	vg = nvgl->createContext(NVG_STENCIL_STROKES | NVG_DEBUG);
+    vg = nvgl->createContext(NVG_STENCIL_STROKES | NVG_DEBUG);
 #else
-	vg = nvgl->createContext(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
+    vg = nvgl->createContext(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 #endif
-	if (vg == NULL) {
-		printf("Could not init nanovg.\n");
-		return -1;
-	}
+    if (vg == NULL) {
+        printf("Could not init nanovg.\n");
+        return -1;
+    }
 
-	if (loadDemoData(vg, &data) == -1)
-		return -1;
+    if (loadDemoData(vg, &data) == -1)
+        return -1;
 
-	glfwSwapInterval(0);
+    glfwSwapInterval(0);
 
-	glfwSetTime(0);
-	//prevt = glfwGetTime();
+    glfwSetTime(0);
+    // prevt = glfwGetTime();
 
-	while (!glfwWindowShouldClose(window))
-	{
-		double mx, my, t;
-		int winWidth, winHeight;
-		int fbWidth, fbHeight;
-		float pxRatio;
+    while (!glfwWindowShouldClose(window)) {
+        double mx, my, t;
+        int winWidth, winHeight;
+        int fbWidth, fbHeight;
+        float pxRatio;
 
-		t = glfwGetTime();
-		//double dt = t - prevt;
-		//prevt = t;
+        t = glfwGetTime();
+        // double dt = t - prevt;
+        // prevt = t;
 
-		glfwGetCursorPos(window, &mx, &my);
-		glfwGetWindowSize(window, &winWidth, &winHeight);
-		glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+        glfwGetCursorPos(window, &mx, &my);
+        glfwGetWindowSize(window, &winWidth, &winHeight);
+        glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 
-		// Calculate pixel ration for hi-dpi devices.
-		pxRatio = (float)fbWidth / (float)winWidth;
+        // Calculate pixel ration for hi-dpi devices.
+        pxRatio = (float)fbWidth / (float)winWidth;
 
-		// Update and render
-		glViewport(0, 0, fbWidth, fbHeight);
-		if (premult)
-			glClearColor(0,0,0,0);
-		else
-			glClearColor(0.3f, 0.3f, 0.32f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+        // Update and render
+        glViewport(0, 0, fbWidth, fbHeight);
+        if (premult)
+            glClearColor(0, 0, 0, 0);
+        else
+            glClearColor(0.3f, 0.3f, 0.32f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		nvgBeginFrame(vg, winWidth, winHeight, pxRatio);
+        nvgBeginFrame(vg, winWidth, winHeight, pxRatio);
 
-		renderDemo(vg, mx,my, winWidth,winHeight, t, blowup, &data);
+        renderDemo(vg, mx, my, winWidth, winHeight, t, blowup, &data);
 
-		nvgEndFrame(vg);
+        nvgEndFrame(vg);
 
-		if (screenshot) {
-			screenshot = 0;
-			saveScreenShot(fbWidth, fbHeight, premult, "dump.png");
-		}
+        if (screenshot) {
+            screenshot = 0;
+            saveScreenShot(fbWidth, fbHeight, premult, "dump.png");
+        }
 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
 
-	freeDemoData(vg, &data);
+    freeDemoData(vg, &data);
 
-	nvgl->deleteContext(vg);
+    nvgl->deleteContext(vg);
 
-	glfwTerminate();
-	return 0;
+    glfwTerminate();
+    return 0;
 }

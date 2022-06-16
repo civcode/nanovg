@@ -36,7 +36,7 @@ Revision 4 (2014-12-17)
 
 OUI (short for "Open UI", spoken like the french "oui" for "yes") is a
 platform agnostic single-header C library for layouting GUI elements and
-handling related user input. Together with a set of widget drawing and logic 
+handling related user input. Together with a set of widget drawing and logic
 routines it can be used to build complex user interfaces.
 
 OUI is a semi-immediate GUI. Widget declarations are persistent for the duration
@@ -140,14 +140,15 @@ void app_checkbox_handler(int item, UIevent event) {
 int checkbox(const char *label, bool *checked) {
 
     // create new ui item
-    int item = uiItem(); 
+    int item = uiItem();
 
     // set minimum size of wiget; horizontal size is dynamic, vertical is fixed
     uiSetSize(item, 0, APP_WIDGET_HEIGHT);
 
     // store some custom data with the checkbox that we use for rendering
     // and value changes.
-    CheckBoxData *data = (CheckBoxData *)uiAllocHandle(item, sizeof(CheckBoxData));
+    CheckBoxData *data = (CheckBoxData *)uiAllocHandle(item,
+sizeof(CheckBoxData));
 
     // assign a custom typeid to the data so the renderer knows how to
     // render this control, and our event handler
@@ -254,7 +255,7 @@ void layout_window(int w, int h) {
 #endif
 
 // some language bindings (e.g. terra) have no good support
-// for unions or unnamed structs; 
+// for unions or unnamed structs;
 // #define OUI_USE_UNION_VECTORS 0 to disable.
 #ifndef OUI_USE_UNION_VECTORS
 #define OUI_USE_UNION_VECTORS 1
@@ -313,7 +314,6 @@ typedef enum UIboxFlags {
     UI_NOWRAP = 0x000,
     // multi-line, wrap left to right
     UI_WRAP = 0x004,
-
 
     // justify-content (start, end, center, space-between)
     // at start of row/column
@@ -381,7 +381,7 @@ typedef enum UIevent {
     // when the cursor is hovering the items rectangle; this is the
     // behavior expected for buttons.
     UI_BUTTON0_HOT_UP = 0x1000,
-    // item is being captured (button 0 constantly pressed); 
+    // item is being captured (button 0 constantly pressed);
     // when this event has a handler, uiGetState() will return UI_ACTIVE as
     // long as button 0 is down.
     UI_BUTTON0_CAPTURE = 0x2000,
@@ -419,19 +419,23 @@ typedef struct UIvec2 {
 #if OUI_USE_UNION_VECTORS || defined(OUI_IMPLEMENTATION)
     union {
         int v[2];
-        struct { int x, y; };
+        struct {
+            int x, y;
+        };
     };
 #else
     int x, y;
-#endif    
+#endif
 } UIvec2;
 
 // layout rectangle
 typedef struct UIrect {
-#if OUI_USE_UNION_VECTORS || defined(OUI_IMPLEMENTATION)    
+#if OUI_USE_UNION_VECTORS || defined(OUI_IMPLEMENTATION)
     union {
         int v[4];
-        struct { int x, y, w, h; };
+        struct {
+            int x, y, w, h;
+        };
     };
 #else
     int x, y, w, h;
@@ -451,11 +455,10 @@ typedef struct UIrect {
 // using uiAllocHandle(); you may pass 0 if you don't need to allocate
 // handles.
 // 4096 and (1<<20) are good starting values.
-OUI_EXPORT UIcontext *uiCreateContext(
-        unsigned int item_capacity,
-        unsigned int buffer_capacity);
+OUI_EXPORT UIcontext *uiCreateContext(unsigned int item_capacity,
+                                      unsigned int buffer_capacity);
 
-// select an UI context as the current context; a context must always be 
+// select an UI context as the current context; a context must always be
 // selected before using any of the other UI functions
 OUI_EXPORT void uiMakeCurrent(UIcontext *ctx);
 
@@ -473,7 +476,7 @@ OUI_EXPORT UIcontext *uiGetContext();
 // screen coordinates at (x,y)
 OUI_EXPORT void uiSetCursor(int x, int y);
 
-// returns the current cursor position in screen coordinates as set by 
+// returns the current cursor position in screen coordinates as set by
 // uiSetCursor()
 OUI_EXPORT UIvec2 uiGetCursor();
 
@@ -521,15 +524,11 @@ OUI_EXPORT void uiSetScroll(int x, int y);
 // returns the currently accumulated scroll wheel offsets for this frame
 OUI_EXPORT UIvec2 uiGetScroll();
 
-
-
-
-
 // Stages
 // ------
 
 // clear the item buffer; uiBeginLayout() should be called before the first
-// UI declaration for this frame to avoid concatenation of the same UI multiple 
+// UI declaration for this frame to avoid concatenation of the same UI multiple
 // times.
 // After the call, all previously declared item IDs are invalid, and all
 // application dependent context data has been freed.
@@ -547,18 +546,17 @@ OUI_EXPORT void uiEndLayout();
 // for more than one frame and uiEndLayout() is not called
 OUI_EXPORT void uiUpdateHotItem();
 
-// update the internal state according to the current cursor position and 
+// update the internal state according to the current cursor position and
 // button states, and call all registered handlers.
-// timestamp is the time in milliseconds relative to the last call to uiProcess()
-// and is used to estimate the threshold for double-clicks
-// after calling uiProcess(), no further modifications to the item tree should
-// be done until the next call to uiBeginLayout().
-// Items should be drawn before a call to uiProcess()
-// this is an O(N) operation for N = number of declared items.
+// timestamp is the time in milliseconds relative to the last call to
+// uiProcess() and is used to estimate the threshold for double-clicks after
+// calling uiProcess(), no further modifications to the item tree should be done
+// until the next call to uiBeginLayout(). Items should be drawn before a call
+// to uiProcess() this is an O(N) operation for N = number of declared items.
 OUI_EXPORT void uiProcess(int timestamp);
 
-// reset the currently stored hot/active etc. handles; this should be called when
-// a re-declaration of the UI changes the item indices, to avoid state
+// reset the currently stored hot/active etc. handles; this should be called
+// when a re-declaration of the UI changes the item indices, to avoid state
 // related glitches because item identities have changed.
 OUI_EXPORT void uiClearState();
 
@@ -593,8 +591,8 @@ OUI_EXPORT void *uiAllocHandle(int item, unsigned int size);
 // uiSetEvents.
 OUI_EXPORT void uiSetHandler(UIhandler handler);
 
-// flags is a combination of UI_EVENT_* and designates for which events the 
-// handler should be called. 
+// flags is a combination of UI_EVENT_* and designates for which events the
+// handler should be called.
 OUI_EXPORT void uiSetEvents(int item, unsigned int flags);
 
 // flags is a user-defined set of flags defined by UI_USERMASK.
@@ -624,7 +622,7 @@ OUI_EXPORT int uiInsertBack(int item, int child);
 // same as uiInsert()
 OUI_EXPORT int uiInsertFront(int item, int child);
 
-// set the size of the item; a size of 0 indicates the dimension to be 
+// set the size of the item; a size of 0 indicates the dimension to be
 // dynamic; if the size is set, the item can not expand beyond that size.
 OUI_EXPORT void uiSetSize(int item, int w, int h);
 
@@ -669,8 +667,8 @@ OUI_EXPORT unsigned int uiGetAllocSize();
 // The returned value is one of UI_COLD, UI_HOT, UI_ACTIVE, UI_FROZEN.
 OUI_EXPORT UIitemState uiGetState(int item);
 
-// return the application-dependent handle of the item as passed to uiSetHandle()
-// or uiAllocHandle().
+// return the application-dependent handle of the item as passed to
+// uiSetHandle() or uiAllocHandle().
 OUI_EXPORT void *uiGetHandle(int item);
 
 // return the item that is currently under the cursor or -1 for none
@@ -682,12 +680,12 @@ OUI_EXPORT int uiGetFocusedItem();
 // returns the topmost item containing absolute location (x,y), starting with
 // item as parent, using a set of flags and masks as filter:
 // if both flags and mask are UI_ANY, the first topmost item is returned.
-// if mask is UI_ANY, the first topmost item matching *any* of flags is returned.
-// otherwise the first item matching (item.flags & flags) == mask is returned.
-// you may combine box, layout, event and user flags.
-// frozen items will always be ignored.
-OUI_EXPORT int uiFindItem(int item, int x, int y,
-        unsigned int flags, unsigned int mask);
+// if mask is UI_ANY, the first topmost item matching *any* of flags is
+// returned. otherwise the first item matching (item.flags & flags) == mask is
+// returned. you may combine box, layout, event and user flags. frozen items
+// will always be ignored.
+OUI_EXPORT int uiFindItem(int item, int x, int y, unsigned int flags,
+                          unsigned int mask);
 
 // return the handler callback as passed to uiSetHandler()
 OUI_EXPORT UIhandler uiGetHandler();
@@ -701,7 +699,7 @@ OUI_EXPORT unsigned int uiGetKey();
 // when handling a keyboard or mouse event: the active modifier keys
 OUI_EXPORT unsigned int uiGetModifier();
 
-// returns the items layout rectangle in absolute coordinates. If 
+// returns the items layout rectangle in absolute coordinates. If
 // uiGetRect() is called before uiEndLayout(), the values of the returned
 // rectangle are undefined.
 OUI_EXPORT UIrect uiGetRect(int item);
@@ -729,9 +727,9 @@ OUI_EXPORT short uiGetMarginRight(int item);
 // return the bottom margin of the item as set with uiSetMargins()
 OUI_EXPORT short uiGetMarginDown(int item);
 
-// when uiBeginLayout() is called, the most recently declared items are retained.
-// when uiEndLayout() completes, it matches the old item hierarchy to the new one
-// and attempts to map old items to new items as well as possible.
+// when uiBeginLayout() is called, the most recently declared items are
+// retained. when uiEndLayout() completes, it matches the old item hierarchy to
+// the new one and attempts to map old items to new items as well as possible.
 // when passed an item Id from the previous frame, uiRecoverItem() returns the
 // items new assumed Id, or -1 if the item could not be mapped.
 // it is valid to pass -1 as item.
@@ -753,29 +751,28 @@ enum {
     // bit 0-2
     UI_ITEM_BOX_MODEL_MASK = 0x000007,
     // bit 0-4
-    UI_ITEM_BOX_MASK       = 0x00001F,
+    UI_ITEM_BOX_MASK = 0x00001F,
     // bit 5-8
-    UI_ITEM_LAYOUT_MASK    = 0x0003E0,
+    UI_ITEM_LAYOUT_MASK = 0x0003E0,
     // bit 9-18
-    UI_ITEM_EVENT_MASK     = 0x07FC00,
+    UI_ITEM_EVENT_MASK = 0x07FC00,
     // item is frozen (bit 19)
-    UI_ITEM_FROZEN         = 0x080000,
+    UI_ITEM_FROZEN = 0x080000,
     // item handle is pointer to data (bit 20)
-    UI_ITEM_DATA           = 0x100000,
+    UI_ITEM_DATA = 0x100000,
     // item has been inserted (bit 21)
-    UI_ITEM_INSERTED       = 0x200000,
+    UI_ITEM_INSERTED = 0x200000,
     // horizontal size has been explicitly set (bit 22)
-    UI_ITEM_HFIXED         = 0x400000,
+    UI_ITEM_HFIXED = 0x400000,
     // vertical size has been explicitly set (bit 23)
-    UI_ITEM_VFIXED         = 0x800000,
+    UI_ITEM_VFIXED = 0x800000,
     // bit 22-23
-    UI_ITEM_FIXED_MASK     = 0xC00000,
+    UI_ITEM_FIXED_MASK = 0xC00000,
 
     // which flag bits will be compared
-    UI_ITEM_COMPARE_MASK = UI_ITEM_BOX_MODEL_MASK
-        | (UI_ITEM_LAYOUT_MASK & ~UI_BREAK)
-        | UI_ITEM_EVENT_MASK
-        | UI_USERMASK,
+    UI_ITEM_COMPARE_MASK = UI_ITEM_BOX_MODEL_MASK |
+                           (UI_ITEM_LAYOUT_MASK & ~UI_BREAK) |
+                           UI_ITEM_EVENT_MASK | UI_USERMASK,
 };
 
 typedef struct UIitem {
@@ -856,7 +853,7 @@ struct UIcontext {
     int last_click_timestamp;
     int clicks;
 
-    int count;    
+    int count;
     int last_count;
     int eventcount;
     unsigned int datasize;

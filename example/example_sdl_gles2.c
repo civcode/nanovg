@@ -29,44 +29,42 @@
 #include <nanovg_gl.h>
 #include <nanovg_gl_utils.h>
 
-int main(int argc, char **argv) {
-    int flags = SDL_INIT_EVERYTHING & ~(SDL_INIT_TIMER | SDL_INIT_HAPTIC);
-    if (SDL_Init(flags) < 0) {
-        printf("ERROR: SDL_Init failed: %s", SDL_GetError());
+int main(int argc, char **argv)
+{
+    // int flags = SDL_INIT_EVERYTHING & ~(SDL_INIT_TIMER | SDL_INIT_HAPTIC);
+    // if (SDL_Init(flags) < 0) {
+    //     printf("ERROR: SDL_Init failed: %s", SDL_GetError());
+    //     return EXIT_FAILURE;
+    // }
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         return EXIT_FAILURE;
     }
 
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    // Try with these GL attributes
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
 
+    printf("create window\n");
     SDL_Window *window = SDL_CreateWindow(
-		"NanoVG Example", 
-		SDL_WINDOWPOS_UNDEFINED, 
-		SDL_WINDOWPOS_UNDEFINED, 
-		1024, 
-		800,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
-	);
+        "NanoVG Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 800,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN |
+            SDL_WINDOW_ALLOW_HIGHDPI);
 
     if (!window) { // If it fails, try with more conservative options
-		SDL_Log("fallback");
+        SDL_Log("fallback");
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
         window = SDL_CreateWindow(
-			"Example", 
-			SDL_WINDOWPOS_UNDEFINED, 
-			SDL_WINDOWPOS_UNDEFINED, 1024, 800,
-            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
-		);
+            "Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 800,
+            SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN |
+                SDL_WINDOW_ALLOW_HIGHDPI SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE |
+                SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
 
         if (!window) { // We were not able to create the window
             printf("ERROR: SDL_CreateWindow failed: %s", SDL_GetError());
@@ -77,7 +75,7 @@ int main(int argc, char **argv) {
     SDL_GLContext context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, context);
 
-    NVGcontext* vg = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
+    NVGcontext *vg = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
     if (vg == NULL) {
         printf("ERROR: NanoVG init failed");
         return EXIT_FAILURE;
@@ -87,19 +85,19 @@ int main(int argc, char **argv) {
     SDL_GetWindowSize(window, &winWidth, &winHeight);
 
     int fbWidth = winWidth;
-    //int fbHeight = winHeight;
+    // int fbHeight = winHeight;
     float fbRatio = (float)fbWidth / (float)winWidth;
 
-    int quit=0;
+    int quit = 0;
     SDL_Event event;
 
     while (!quit) {
         SDL_PollEvent(&event);
 
-        switch(event.type) {
-            case SDL_QUIT:
-                quit=1;
-                break;
+        switch (event.type) {
+        case SDL_QUIT:
+            quit = 1;
+            break;
         }
 
         nvgBeginFrame(vg, winWidth, winHeight, fbRatio);
